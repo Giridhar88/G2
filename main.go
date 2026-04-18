@@ -19,7 +19,7 @@ func main() {
 		cmd.CreateNewFile()
 	}
 	if *open != "" {
-		err := cmd.OpenFile(*open)
+		err := cmd.OpenFileWithDate(*open)
 
 		if err != nil {
 			errors.Join(errors.New("couldnt open the specified file"), err)
