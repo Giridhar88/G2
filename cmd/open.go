@@ -15,6 +15,7 @@ func createTempFile(data []byte) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	defer tmp.Close()
 	tmpPath := tmp.Name()
 	tmp.WriteString(string(data))
 	return tmpPath, nil
@@ -22,7 +23,6 @@ func createTempFile(data []byte) (string, error) {
 
 // open the decrypted content in nvim, func accetps the path of tmp file
 func openFileInNvim(path string) error {
-	defer os.Remove(path)
 	cmd := exec.Command("nvim", path)
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
@@ -34,6 +34,7 @@ func openFileInNvim(path string) error {
 	return nil
 }
 
+// opens the file with the specified date, attaches the hidden dir to the path and opens it using the OpenFile func
 func OpenFileWithDate(dateStr string) error {
 	g2path, err := checkg2Dir()
 	if err != nil {
@@ -50,7 +51,7 @@ func OpenFileWithDate(dateStr string) error {
 // Opens the specified file in nvim after decrypting and storing it in a temp file, func accepts the path of the enc file
 func OpenFile(path string) error {
 
-	file, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
+	file, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
 		return err
 	}
@@ -64,6 +65,7 @@ func OpenFile(path string) error {
 		return err
 	}
 	tmpPath, err := createTempFile(content)
+	defer os.Remove(tmpPath)
 	if err != nil {
 		return err
 	}
@@ -71,5 +73,19 @@ func OpenFile(path string) error {
 	if err != nil {
 		return err
 	}
+	newContents, err := os.ReadFile(tmpPath)
+	if err != nil {
+		return err
+	}
+	file2write, err := os.OpenFile(path, os.O_TRUNC|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer file2write.Close()
+	_, err = file2write.Write(newContents)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
