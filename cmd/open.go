@@ -82,7 +82,12 @@ func OpenFile(path string) error {
 		return err
 	}
 	defer file2write.Close()
-	_, err = file2write.Write(newContents)
+
+	encryptedContents, err := internal.Encrypt(newContents)
+	if err != nil {
+		return err
+	}
+	_, err = file2write.Write(encryptedContents)
 	if err != nil {
 		return err
 	}

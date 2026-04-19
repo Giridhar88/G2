@@ -5,11 +5,21 @@ import (
 	"flag"
 	"fmt"
 	"g2/cmd"
+	"g2/internal"
+	"syscall"
 	"time"
+
+	"golang.org/x/term"
 )
 
 func main() {
 
+	fmt.Println("Enter pwd: ")
+	bytePwd, err := term.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		panic(err)
+	}
+	internal.Init(bytePwd)
 	newFile := flag.Bool("new", false, "Create a new file")
 	open := flag.String("open", "", "open the file for the specified date")
 
