@@ -12,7 +12,7 @@ func Encrypt(data []byte, pwd []byte) ([]byte, error) {
 		return []byte{}, nil
 	}
 	salt := make([]byte, 16)
-
+	rand.Read(salt)
 	key, err := GenerateKey(pwd, salt)
 	if err != nil {
 		return nil, err

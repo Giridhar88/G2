@@ -65,10 +65,10 @@ func OpenFile(path string, pwd []byte) error {
 		return err
 	}
 	tmpPath, err := createTempFile(content)
-	defer os.Remove(tmpPath)
 	if err != nil {
 		return err
 	}
+	defer os.Remove(tmpPath)
 	err = openFileInNvim(tmpPath)
 	if err != nil {
 		return err
