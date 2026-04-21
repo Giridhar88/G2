@@ -26,7 +26,7 @@ func checkg2Dir() (string, error) {
 }
 
 // create new file with the curr date. creates the enc file and opens the raw content in a tmp file, if enc file already exists opens it in tmp file after decrypting it
-func CreateNewFile() error {
+func CreateNewFile(pwd []byte) error {
 	currDate := time.Now()
 	dateStr := currDate.Format("02-01-2006")
 
@@ -36,7 +36,7 @@ func CreateNewFile() error {
 	}
 
 	path := filepath.Join(g2path, fmt.Sprintf("%s.enc", dateStr))
-	err = OpenFile(path)
+	err = OpenFile(path, pwd)
 	if err != nil {
 		return err
 	}

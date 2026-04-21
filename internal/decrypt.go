@@ -7,12 +7,13 @@ import (
 )
 
 // decrypt the bytes given to the func
-func Decrypt(data []byte) ([]byte, error) {
+func Decrypt(data []byte, pwd []byte) ([]byte, error) {
 	if len(data) == 0 {
 		return []byte{}, nil
 	}
-	cs.salt = data[:16]
-	key, err := cs.GenerateKey()
+	salt := make([]byte, 16)
+	copy(salt, data[:16])
+	key, err := GenerateKey(pwd, salt)
 	if err != nil {
 		return nil, err
 	}

@@ -35,13 +35,13 @@ func openFileInNvim(path string) error {
 }
 
 // opens the file with the specified date, attaches the hidden dir to the path and opens it using the OpenFile func
-func OpenFileWithDate(dateStr string) error {
+func OpenFileWithDate(dateStr string, pwd []byte) error {
 	g2path, err := checkg2Dir()
 	if err != nil {
 		return err
 	}
 	path := filepath.Join(g2path, fmt.Sprintf("%s.enc", dateStr))
-	err = OpenFile(path)
+	err = OpenFile(path, pwd)
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func OpenFileWithDate(dateStr string) error {
 }
 
 // Opens the specified file in nvim after decrypting and storing it in a temp file, func accepts the path of the enc file
-func OpenFile(path string) error {
+func OpenFile(path string, pwd []byte) error {
 
 	file, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
@@ -60,7 +60,7 @@ func OpenFile(path string) error {
 	if err != nil {
 		return err
 	}
-	content, err := internal.Decrypt(data)
+	content, err := internal.Decrypt(data, pwd)
 	if err != nil {
 		return err
 	}
@@ -83,7 +83,7 @@ func OpenFile(path string) error {
 	}
 	defer file2write.Close()
 
-	encryptedContents, err := internal.Encrypt(newContents)
+	encryptedContents, err := internal.Encrypt(newContents, pwd)
 	if err != nil {
 		return err
 	}

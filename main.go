@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"g2/cmd"
-	"g2/internal"
 	"syscall"
 	"time"
 
@@ -19,22 +18,21 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	internal.Init(bytePwd)
 	newFile := flag.Bool("new", false, "Create a new file")
 	open := flag.String("open", "", "open the file for the specified date")
 
 	flag.Parse()
 
 	if *newFile {
-		cmd.CreateNewFile()
+		cmd.CreateNewFile(bytePwd)
 	}
 	if *open == "latest" {
-		err := cmd.OpenFileWithDate(time.Now().Format("02-01-2006"))
+		err := cmd.OpenFileWithDate(time.Now().Format("02-01-2006"), bytePwd)
 		if err != nil {
 			fmt.Println(err)
 		}
 	} else if *open != "" {
-		err := cmd.OpenFileWithDate(*open)
+		err := cmd.OpenFileWithDate(*open, bytePwd)
 
 		if err != nil {
 			errors.Join(errors.New("couldnt open the specified file"), err)

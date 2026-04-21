@@ -7,11 +7,13 @@ import (
 )
 
 // encrypt the bytes given to the func
-func Encrypt(data []byte) ([]byte, error) {
+func Encrypt(data []byte, pwd []byte) ([]byte, error) {
 	if len(data) == 0 {
 		return []byte{}, nil
 	}
-	key, err := cs.GenerateKey()
+	salt := make([]byte, 16)
+
+	key, err := GenerateKey(pwd, salt)
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +29,7 @@ func Encrypt(data []byte) ([]byte, error) {
 	nonce := make([]byte, gcm.NonceSize())
 	rand.Read(nonce)
 	ciphertext := gcm.Seal(nil, nonce, data, nil)
-	out := append(cs.salt, nonce...)
+	out := append(salt, nonce...)
 	out = append(out, ciphertext...)
 
 	return out, nil
